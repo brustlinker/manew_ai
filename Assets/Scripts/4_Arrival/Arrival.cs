@@ -25,13 +25,24 @@ public class Arrival : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+		//更新位置
+		Vector3 acc = CalArriavalForce()/1;
+		velocity += acc*Time.deltaTime;
+		transform.position+=velocity*Time.deltaTime;
+
+		//更新绘制路径
+		DrawPath();
+
+		//更新朝向
+		UpdateForward();
+	}
 
 
-
-		//update位置关系
-
+	Vector3 CalArriavalForce()
+	{
 		Vector3 toTarget = target.position - transform.position;
 		float distance   = toTarget.magnitude;
+
 
 		Vector3 steeringForce = new Vector3(0,0,0);
 
@@ -50,13 +61,16 @@ public class Arrival : MonoBehaviour {
 			Vector3 desiredVelocity = toTarget - velocity;
 			steeringForce = desiredVelocity - velocity;
 		}
-		Vector3 acc = steeringForce/1;
-		velocity += acc*Time.deltaTime;
-		transform.position+=velocity*Time.deltaTime;
+
+		return steeringForce;
+	}
 
 
-
-		//更新绘制路径
+	/// <summary>
+	/// 绘制路径
+	/// </summary>
+	void DrawPath()
+	{
 		timer+=Time.deltaTime;
 
 		if(timer>0.1)
@@ -70,12 +84,12 @@ public class Arrival : MonoBehaviour {
 		{
 			Debug.DrawLine(pathList[i],pathList[i+1],Color.red);
 		}
-
-		//更新朝向
-		UpdateForward();
 	}
 
 
+	/// <summary>
+	/// 更新朝向
+	/// </summary>
 	private void UpdateForward()
 	{
 		//计算出夹角(如果利用Atan只能处理1、4象限,而且不用处理除0错误)
